@@ -1,4 +1,9 @@
-// Test Packet Radio
+/* RFDuino_BLE_AFSK_TNC
+ * Interfaces with a PIC controler to get Analog samples from the
+ * audio output of a radio and demodulates the audio sending the
+ * recivied packets over Bluetooth LE to connected devices
+ * @author Michael Marques <dryerzinia@gmail.com>
+ */
 
 #include <RFduinoBLE.h>
 #include <stdint.h>
