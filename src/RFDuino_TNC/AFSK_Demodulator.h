@@ -24,10 +24,6 @@
 
 #include <math.h>
 
-#include "char_array.h"
-
-#include "char_array_expandable.h"
-
 #include "decimal.h"
 
 #include "char_ring_buffer.h"
@@ -36,6 +32,8 @@
 #ifndef PI
 #define PI 3.14159265359
 #endif
+
+#define MAX_BYTES 255
 
 #define WINDOW 9
 
@@ -46,9 +44,6 @@
 #define BIT_RATE 1200
 
 #define BIT_WIDTH SAMPLE_RATE/BIT_RATE
-
-#define COEFF0 d_from_float(2*cos((2*PI/WINDOW)*((float)WINDOW*FREQUENCY0/SAMPLE_RATE)))
-#define COEFF1 d_from_float(2*cos((2*PI/WINDOW)*((float)WINDOW*FREQUENCY1/SAMPLE_RATE)))
 
 /**
  * @ingroup Packet
@@ -108,7 +103,8 @@ typedef struct {
    * It has a default size of 330 to contain a standard APRS packet without
    * any reallocations
    */
-  char_array_expandable byte_sequence;
+  uint16_t byte_seq_len;
+  char byte_sequence[MAX_BYTES];
 
 } AFSK_Demodulator;
 
@@ -124,27 +120,13 @@ void AFSK_Demodulator_init();
 
 /**
  * @ingroup Packet
- * Deallocates memory used in buffers
- * Call this when you are done with decoder or you will have memory leaks
- */
-void AFSK_Demodulator_destroy();
-
-/**
- * @ingroup Packet
  * Pass another byte of signal data to the demodulator
  * @returns a pointer to a char array containing a demodulated packet
  *  if this byte did not complete demodulation of a packet it returns a
  *  NULL pointer instead
  */
-char_array* AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data);
+void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data);
 
-/**
- * @ingroup Packet
- * Adjust the sample rate of the audio signal that is being processed
- * This function resets the window width so these parameters cannot be
- * adjusted directly
- */
-void AFSK_Demodulator_set_sample_rate(uint32_t sr);
 /**
  * @ingroup Packet
  * Adjust the bit rate of the incoming data
@@ -152,22 +134,6 @@ void AFSK_Demodulator_set_sample_rate(uint32_t sr);
  * adjusted directly
  */
 void AFSK_Demodulator_set_bit_rate(uint16_t br);
-
-/**
- * @ingroup Packet
- * Sets the offset of the demodulator
- * This will multiply by the average signal magnitude and be added to the
- * Fourier coefficient delta to better center the signal
- */
-void AFSK_Demodulator_set_offset(decimal off);
-/**
- * @ingroup Packet
- * Sets the Noise Floor
- * Fourier coefficients deltas that are below this value multiplied by
- * the average signal magnitude will be ignored as they pertain to
- * detecting Zero-Crossings
- */
-void AFSK_Demodulator_set_noise_floor(decimal nf);
 
 #ifdef __cplusplus
 }

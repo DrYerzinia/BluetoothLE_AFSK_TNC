@@ -29,7 +29,8 @@ void AFSK_Demodulator_reset() {
 
   self.fcd_filt = 0;
 
-  char_array_expandable_clear(&self.byte_sequence);
+  self.byte_seq_len = 0;
+
   char_ring_buffer_clear(&self.bit_sequence);
 
 }
@@ -39,29 +40,15 @@ void AFSK_Demodulator_init() {
   self.input_buffer.size = 0;
 
   self.fcd_filt = 0;
+  self.byte_seq_len = 0;
 
   char_ring_buffer_init(&self.bit_sequence, 14);
-
-  char_array_expandable_init(&self.byte_sequence, 330);
 
   AFSK_Demodulator_reset(self);
 
 }
 
-void AFSK_Demodulator_destroy() {
-
-  if (self.input_buffer.size != 0)
-    decimal_ring_buffer_destory(&self.input_buffer);
-
-  if (self.bit_sequence.size != 0)
-    char_ring_buffer_destory(&self.bit_sequence);
-
-  if (self.byte_sequence.capacity != 0)
-    char_array_expandable_destroy(&self.byte_sequence);
-
-}
-
-char_array* AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data) {
+void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data) {
 
   new_data[0] = 0;
 
@@ -128,17 +115,16 @@ char_array* AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data
 
         // Preamble related things
 
-        uint16_t len = char_array_expandable_size(&self.byte_sequence);
+        uint16_t len = self.byte_seq_len;
         if (len >= 17) {
 
-          signed char *data = self.byte_sequence.data;
           new_data[0] = len;
-          memcpy(new_data + 1, data, len);
+          memcpy(new_data + 1, &self.byte_sequence, len);
 
         }
 
+        self.byte_seq_len = 0;
         char_ring_buffer_clear(&self.bit_sequence);
-        char_array_expandable_clear(&self.byte_sequence);
 
         // Set bit stuffing true so last bit of preamble will be removed
         self.bit_stuffing = true;
@@ -162,14 +148,18 @@ char_array* AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data
       uint8_t avail = char_ring_buffer_avail(&self.bit_sequence);
       if (avail >= 8) {
 
-        signed char byte = 0;
+        int8_t dat = 0;
         for (i = 7; i >= 0; i--) {
-          byte <<= 1;
-          if (char_ring_buffer_get(&self.bit_sequence, i)) byte |= 1;
+          dat <<= 1;
+          if (char_ring_buffer_get(&self.bit_sequence, i)) dat |= 1;
         }
 
         char_ring_buffer_remove(&self.bit_sequence, 8);
-        char_array_expandable_put(&self.byte_sequence, byte);
+        self.byte_sequence[self.byte_seq_len++] = dat;
+        if(self.byte_seq_len >= MAX_BYTES){
+          // Packet Overized!
+          AFSK_Demodulator_reset();
+        }
 
       }
 
@@ -179,8 +169,6 @@ char_array* AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data
       self.count_last++;
 
   }
-
-  return new_data;
 
 }
 
