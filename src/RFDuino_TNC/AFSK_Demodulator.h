@@ -35,21 +35,33 @@
 
 #define MAX_BYTES 255
 
-#define WINDOW 9
-
-#define FREQUENCY0 1200
-#define FREQUENCY1 2200
-
 #define SAMPLE_RATE 11025
-#define BIT_RATE 1200
-
-#define BIT_WIDTH SAMPLE_RATE/BIT_RATE
 
 /**
  * @ingroup Packet
  * Contains all information necessary to demodulate AFSK modulated AX-25 frames
  */
 typedef struct {
+
+  /**
+   * Bit rate of the encoded digital information in the audio signal
+   * Do not adjust this value directly, instead call the appropriate
+   * functions on the decoder as other variables require re-calibration
+   * when these change
+   */
+  uint16_t bit_rate;
+
+  /**
+   * Width of the window of samples to run Goertzels algorithm on and to
+   * average Fourier coefficients across
+   */
+  uint8_t window;
+
+  /**
+   * Width of a bit calculated from Sample Rate and Bit Rate
+   * TODO: call reset in the functions that set Sample Rate and Bit Rate
+   */
+  uint8_t bitwidth;
 
   /**
    * Buffer to hold incoming data until there is enough to fill the window
@@ -71,6 +83,19 @@ typedef struct {
    * Goertzel Coefficient for calculating magnitude of frequency 1
    */
   decimal coeff1;
+
+  /**
+   * Frequency of the 1st AFSK Symbol
+   * Standard VHF packet is 1200/2200 Hz
+   * Standard HF packet is
+   *  PK232 tones 1600/1800 Hz
+   *  KAM tones 2110/2310 Hz
+   */
+  uint16_t frequency_0;
+  /**
+   * Frequency of the 2nd AFSK Symbol
+   */
+  uint16_t frequency_1;
 
   /**
    * Count of samples since last Zero-Crossing
@@ -116,7 +141,7 @@ extern "C" {
  * @ingroup Packet
  * Set up the demodulator with parameters for the type of signal to receive
  */
-void AFSK_Demodulator_init();
+void AFSK_Demodulator_init(uint16_t frequency_0, uint16_t frequency_1, uint16_t bit_rate);
 
 /**
  * @ingroup Packet

@@ -8,13 +8,17 @@ void AFSK_Demodulator_reset() {
 
   self.count_last = 0;
 
+  self.window = (int)(SAMPLE_RATE/self.bit_rate+0.5);
+
+  self.bitwidth = SAMPLE_RATE/self.bit_rate;
+
   /*
    * Calculate Goertzel coefficents for calculating frequency magnitudes
    */
-  float k0 = ((float)WINDOW * FREQUENCY0 / SAMPLE_RATE);
-  float k1 = ((float)WINDOW * FREQUENCY1 / SAMPLE_RATE);
-  float w0 = (2 * PI / WINDOW) * k0;
-  float w1 = (2 * PI / WINDOW) * k1;
+  float k0 = ((float)self.window * self.frequency_0 / SAMPLE_RATE);
+  float k1 = ((float)self.window * self.frequency_1 / SAMPLE_RATE);
+  float w0 = (2 * PI / self.window) * k0;
+  float w1 = (2 * PI / self.window) * k1;
 
   self.coeff0 = d_from_float(2 * cos(w0));
   self.coeff1 = d_from_float(2 * cos(w1));
@@ -25,7 +29,7 @@ void AFSK_Demodulator_reset() {
 
   if (self.input_buffer.size != 0)
     decimal_ring_buffer_destory(&self.input_buffer);
-  decimal_ring_buffer_init(&self.input_buffer, WINDOW + 2);
+  decimal_ring_buffer_init(&self.input_buffer, self.window + 2);
 
   self.fcd_filt = 0;
 
@@ -35,7 +39,12 @@ void AFSK_Demodulator_reset() {
 
 }
 
-void AFSK_Demodulator_init() {
+void AFSK_Demodulator_init(uint16_t frequency_0, uint16_t frequency_1, uint16_t bit_rate) {
+
+  self.frequency_0 = frequency_0;
+  self.frequency_1 = frequency_1;
+
+  self.bit_rate = bit_rate;
 
   self.input_buffer.size = 0;
 
@@ -97,8 +106,7 @@ void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data) {
 
       // Calculate how many bit lengths there are to the transition
       // Integer rounding
-      uint8_t bitwidth = BIT_WIDTH;
-      uint8_t new_bits = (self.count_last + (bitwidth / 2)) / bitwidth;
+      uint8_t new_bits = (self.count_last + (self.bitwidth / 2)) / self.bitwidth;
 
       // If we are not bit stuffing Add a 0
       if (!self.bit_stuffing)

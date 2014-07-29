@@ -63,7 +63,7 @@ void setup() {
   Serial.begin(9600);
 
   RFduinoBLE.begin();
-  AFSK_Demodulator_init();
+  AFSK_Demodulator_init(1200, 2200, 1200);
   SPI_Setup();
 
 }
@@ -115,7 +115,7 @@ void loop() {
     // RX Mode
     // 0x7F Buffer Empty or Radio Squelched sleep 1 ms
     // TX Mode
-    // 0x7F Buffer Full delay 1/11025
+    // 0x7F Buffer Full sleep 1 ms
     // 0x7E TX Finished
 
     if(data == 0x7F){
@@ -193,12 +193,6 @@ void loop() {
         sent_len = true;
 
       }
-
-    } else if (!sent_zero) {
-
-      // Send 0 if no packets available
-      RFduinoBLE.send(0);
-      sent_zero = true;
 
     }
 
