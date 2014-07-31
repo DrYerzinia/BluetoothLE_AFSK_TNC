@@ -175,7 +175,7 @@ void main(){
 	printf("ARISS Modulator Test passed\n");
 
 	test_modulator(ISS_pass_data, ISS_pass_data_len, ISS_pass_count);
-	printf("ARISS Modulator Test passed\n");
+	printf("ISS pass Modulator Test passed\n");
 
 }
 
