@@ -1,5 +1,3 @@
-#define DISABLE_FLOAT
-
 #ifndef DECIMAL_H
 #define DECIMAL_H
 
@@ -11,4 +9,5 @@ typedef fx32 decimal;
 #define d_from_int(a) fx32_from_int(a)
 #define d_from_float(a) fx32_from_float(a)
 #define d_to_int(a) fx32_to_int(a)
+
 #endif

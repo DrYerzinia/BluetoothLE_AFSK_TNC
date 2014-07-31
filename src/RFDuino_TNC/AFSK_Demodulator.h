@@ -34,7 +34,6 @@
 #endif
 
 #define MAX_BYTES 255
-
 #define SAMPLE_RATE 11025
 
 /**

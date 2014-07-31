@@ -25,7 +25,6 @@ uint8_t packet_buffer[NUM_PACKET_BUFFERS][PACKET_BUF_LEN];
 
 // Packet send via bluetooth
 bool sent_len = false;
-bool sent_zero = false;
 bool cnnected = false;
 uint8_t packet_progress = 0;
 
@@ -82,7 +81,11 @@ void RFduinoBLE_onDisconnect() {
 
 void RFduinoBLE_onReceive(char *data, int len) {
 
-  sent_zero = false;
+  // Messages types:
+  // 0x01 Change Decoder Parameters
+  // 0x02 Send message from radio
+  // 0x03 Go to sleep
+  // 0x04 Radio tuning if possible
 
 }
 

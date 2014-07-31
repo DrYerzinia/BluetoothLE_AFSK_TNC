@@ -63,7 +63,7 @@ void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data) {
 
   decimal_ring_buffer_put(&self.input_buffer, d_from_int(data_point));
 
-  if (decimal_ring_buffer_avail(&self.input_buffer) > WINDOW) {
+  if (decimal_ring_buffer_avail(&self.input_buffer) > self.window) {
 
     decimal q1_0 = 0;
     decimal q1_1 = 0;
@@ -71,7 +71,7 @@ void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data) {
     decimal q2_1 = 0;
 
     int16_t i;
-    for (i = 0; i <= WINDOW; i++) {
+    for (i = 0; i <= self.window; i++) {
 
       decimal q0_0 = dcmul(self.coeff0, q1_0) - q2_0 + decimal_ring_buffer_get(&self.input_buffer, i);
       decimal q0_1 = dcmul(self.coeff1, q1_1) - q2_1 + decimal_ring_buffer_get(&self.input_buffer, i);
