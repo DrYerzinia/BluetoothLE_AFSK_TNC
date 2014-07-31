@@ -3,6 +3,14 @@
 
 #include <stdint.h>
 
-extern uint8_t sin_table[256];
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern const uint8_t sin_table[256];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

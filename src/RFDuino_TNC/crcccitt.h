@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-uint16_t CRCCCITT(uint8_t *data, uint16_t len, uint16_t polynomial);
+uint16_t CRCCCITT(const uint8_t *data, uint16_t len, const uint16_t polynomial);
 
 #ifdef __cplusplus
 }

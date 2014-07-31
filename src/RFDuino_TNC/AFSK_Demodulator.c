@@ -39,7 +39,7 @@ void AFSK_Demodulator_reset() {
 
 }
 
-void AFSK_Demodulator_init(uint16_t frequency_0, uint16_t frequency_1, uint16_t bit_rate) {
+void AFSK_Demodulator_init(const uint16_t frequency_0, const uint16_t frequency_1, const uint16_t bit_rate) {
 
   self.frequency_0 = frequency_0;
   self.frequency_1 = frequency_1;
@@ -57,7 +57,7 @@ void AFSK_Demodulator_init(uint16_t frequency_0, uint16_t frequency_1, uint16_t 
 
 }
 
-void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data) {
+void AFSK_Demodulator_proccess_byte(const int8_t data_point, uint8_t * new_data) {
 
   new_data[0] = 0;
 

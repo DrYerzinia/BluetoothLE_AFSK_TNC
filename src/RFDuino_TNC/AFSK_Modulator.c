@@ -9,7 +9,7 @@
 
 static AFSK_Modulator self;
 
-void AFSK_Modulator_init(const int8_t * data, uint8_t len, uint16_t bit_rate, uint16_t frequency_0, uint16_t frequency_1, uint8_t start_preambles, uint8_t end_preambles){
+void AFSK_Modulator_init(const int8_t * data, const uint8_t len, const uint16_t bit_rate, const uint16_t frequency_0, const uint16_t frequency_1, const uint8_t start_preambles, const uint8_t end_preambles){
 
   self.stage = 0;
 
@@ -50,7 +50,7 @@ static inline void AFSK_Modulator_change_frequency(){
 
 }
 
-static int8_t AFSK_Modulator_next(uint16_t freq){
+static int8_t AFSK_Modulator_next(const uint16_t freq){
 
   self.phi += 256 * freq / SAMPLE_RATE;
   self.sample_counter++;
@@ -59,7 +59,7 @@ static int8_t AFSK_Modulator_next(uint16_t freq){
 
 }
 
-static int8_t AFSK_Modulator_get_preamble(uint8_t num_preambles){
+static int8_t AFSK_Modulator_get_preamble(const uint8_t num_preambles){
 
   uint16_t current_bit = self.sample_counter * self.bit_rate / SAMPLE_RATE;
 
@@ -80,7 +80,7 @@ static int8_t AFSK_Modulator_get_preamble(uint8_t num_preambles){
   return AFSK_Modulator_next(self.current_frequency);
 
 }
-#include <stdio.h>
+
 static int8_t AFSK_Modulator_get_data(){
 
   uint16_t current_bit = self.sample_counter * self.bit_rate / SAMPLE_RATE;

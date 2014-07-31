@@ -86,6 +86,18 @@ void RFduinoBLE_onReceive(char *data, int len) {
   // 0x02 Send message from radio
   // 0x03 Go to sleep
   // 0x04 Radio tuning if possible
+  switch(data[0]){
+    case 0x01:
+      break;
+    case 0x02:
+      // Set up sending message move
+      // prepare to recieve packet data
+      break;
+    case 0x03:
+      break;
+    case 0x04:
+      break;
+  }
 
 }
 
