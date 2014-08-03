@@ -62,7 +62,7 @@ void setup() {
   Serial.begin(9600);
 
   RFduinoBLE.begin();
-  AFSK_Demodulator_init(1200, 2200, 1200);
+  AFSK_Demodulator_init(1200, 2200, 1200, d_from_float(1800.0));
   SPI_Setup();
 
 }
@@ -146,7 +146,7 @@ void loop() {
       if (packet_buffer[end_packet_buffer][0] != 0) {
   
         uint16_t fsc = CRCCCITT(packet_buffer[end_packet_buffer] + 1, packet_buffer[end_packet_buffer][0] - 2, 0x8408);
-  
+
         // CRC is added to packet with bytes reversed
         uint16_t fsc2 = packet_buffer[end_packet_buffer][packet_buffer[end_packet_buffer][0]];
         fsc2 <<= 8;

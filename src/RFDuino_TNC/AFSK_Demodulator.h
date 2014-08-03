@@ -83,6 +83,8 @@ typedef struct {
    */
   decimal coeff1;
 
+  decimal offset;
+
   /**
    * Frequency of the 1st AFSK Symbol
    * Standard VHF packet is 1200/2200 Hz
@@ -95,6 +97,8 @@ typedef struct {
    * Frequency of the 2nd AFSK Symbol
    */
   uint16_t frequency_1;
+
+  uint16_t same_count;
 
   /**
    * Count of samples since last Zero-Crossing
@@ -140,7 +144,7 @@ extern "C" {
  * @ingroup Packet
  * Set up the demodulator with parameters for the type of signal to receive
  */
-void AFSK_Demodulator_init(uint16_t frequency_0, uint16_t frequency_1, uint16_t bit_rate);
+void AFSK_Demodulator_init(uint16_t frequency_0, uint16_t frequency_1, uint16_t bit_rate, decimal offset);
 
 /**
  * @ingroup Packet
@@ -158,6 +162,8 @@ void AFSK_Demodulator_proccess_byte(int8_t data_point, uint8_t * new_data);
  * adjusted directly
  */
 void AFSK_Demodulator_set_bit_rate(uint16_t br);
+
+void AFSK_Demodulator_set_offset(decimal offset);
 
 #ifdef __cplusplus
 }
