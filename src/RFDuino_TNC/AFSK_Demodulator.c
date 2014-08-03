@@ -8,9 +8,9 @@ void AFSK_Demodulator_reset() {
 
   self.count_last = 0;
 
-  self.window = (int)(SAMPLE_RATE/self.bit_rate+0.5);
+  self.window = (int)(SAMPLE_RATE / self.bit_rate + 0.5);
 
-  self.bitwidth = SAMPLE_RATE/self.bit_rate;
+  self.bitwidth = SAMPLE_RATE / self.bit_rate;
 
   /*
    * Calculate Goertzel coefficents for calculating frequency magnitudes
@@ -39,12 +39,14 @@ void AFSK_Demodulator_reset() {
 
 }
 
-void AFSK_Demodulator_init(const uint16_t frequency_0, const uint16_t frequency_1, const uint16_t bit_rate) {
+void AFSK_Demodulator_init(const uint16_t frequency_0, const uint16_t frequency_1, const uint16_t bit_rate, const decimal offset) {
 
   self.frequency_0 = frequency_0;
   self.frequency_1 = frequency_1;
 
   self.bit_rate = bit_rate;
+
+  self.offset = offset;
 
   self.input_buffer.size = 0;
 
@@ -89,12 +91,12 @@ void AFSK_Demodulator_proccess_byte(const int8_t data_point, uint8_t * new_data)
      * the radio should have a tunning utility so it will turn on an LED when the signal amplitude
      * is in the ideal range for the offset
      */
-    decimal fcd = fc1 - fc2 - d_from_float(1800.0);
+    decimal fcd = fc1 - fc2 - self.offset;
 
     decimal_ring_buffer_pop(&self.input_buffer);
 
     // Moving average filter
-    self.fcd_filt = self.fcd_filt + dmul((fcd - self.fcd_filt), d_from_float(0.4)); // FILT <-- FILT + FF(NEW - FILT)
+    self.fcd_filt = self.fcd_filt + ddiv((fcd - self.fcd_filt), d_from_float(2.3)); // FILT <-- FILT + FF(NEW - FILT)
 
     uint8_t current_value = 0;
     if (self.fcd_filt < 0)
@@ -104,81 +106,94 @@ void AFSK_Demodulator_proccess_byte(const int8_t data_point, uint8_t * new_data)
 
       self.last_bit = current_value;
 
-      // Calculate how many bit lengths there are to the transition
-      // Integer rounding
-      uint8_t new_bits = (self.count_last + (self.bitwidth / 2)) / self.bitwidth;
+      // Ignore any noise
+      if (self.same_count >= 3) {
 
-      // If we are not bit stuffing Add a 0
-      if (!self.bit_stuffing)
-        char_ring_buffer_put(&self.bit_sequence, 0);
+        // Calculate how many bit lengths there are to the transition
+        // Integer rounding
+        uint8_t new_bits = (self.count_last + 1 + (self.bitwidth / 2)) / self.bitwidth;
 
-      // If we where bit stuffing stop now
-      self.bit_stuffing = false;
+        // If we are not bit stuffing Add a 0
+        if (!self.bit_stuffing)
+          char_ring_buffer_put(&self.bit_sequence, 0);
 
-      // Decrement new_bits
-      new_bits--;
+        // If we where bit stuffing stop now
+        self.bit_stuffing = false;
 
-      // If new_bits > 5 we just found a preamble
-      if (new_bits > 5) {
+        // Decrement new_bits
+        new_bits--;
 
-        // Preamble related things
+        // If new_bits > 5 we just found a preamble
+        if (new_bits > 5) {
 
-        uint16_t len = self.byte_seq_len;
-        if (len >= 17) {
+          // Preamble related things
 
-          new_data[0] = len;
-          memcpy(new_data + 1, &self.byte_sequence, len);
+          uint16_t len = self.byte_seq_len;
+          if (len >= 17) {
 
-        }
+            new_data[0] = len;
+            memcpy(new_data + 1, &self.byte_sequence, len);
 
-        self.byte_seq_len = 0;
-        char_ring_buffer_clear(&self.bit_sequence);
+          }
 
-        // Set bit stuffing true so last bit of preamble will be removed
-        self.bit_stuffing = true;
+          self.byte_seq_len = 0;
+          char_ring_buffer_clear(&self.bit_sequence);
 
-      }
-
-      // If its not a preamble
-      else {
-
-        // If new_bits == 5 bit stuffing is occurring
-        if (new_bits == 5)
+          // Set bit stuffing true so last bit of preamble will be removed
           self.bit_stuffing = true;
 
-        // Add the rest of the bits as 1's
-        for (i = 0; i < new_bits; i++)
-          char_ring_buffer_put(&self.bit_sequence, 1);
+        }
+
+        // If its not a preamble
+        else {
+
+          // If new_bits == 5 bit stuffing is occurring
+          if (new_bits == 5)
+            self.bit_stuffing = true;
+
+          // Add the rest of the bits as 1's
+          for (i = 0; i < new_bits; i++)
+            char_ring_buffer_put(&self.bit_sequence, 1);
+
+        }
+
+        // Add bits to the sequence
+        uint8_t avail = char_ring_buffer_avail(&self.bit_sequence);
+        if (avail >= 8) {
+
+          int8_t dat = 0;
+          for (i = 7; i >= 0; i--) {
+            dat <<= 1;
+            if (char_ring_buffer_get(&self.bit_sequence, i)) dat |= 1;
+          }
+
+          char_ring_buffer_remove(&self.bit_sequence, 8);
+          self.byte_sequence[self.byte_seq_len++] = dat;
+          if (self.byte_seq_len >= MAX_BYTES) {
+            // Packet Overized!
+            AFSK_Demodulator_reset();
+          }
+
+        }
+
+        self.count_last = 0;
 
       }
 
-      // Add bits to the sequence
-      uint8_t avail = char_ring_buffer_avail(&self.bit_sequence);
-      if (avail >= 8) {
+      self.same_count = 0;
 
-        int8_t dat = 0;
-        for (i = 7; i >= 0; i--) {
-          dat <<= 1;
-          if (char_ring_buffer_get(&self.bit_sequence, i)) dat |= 1;
-        }
+    } else {
 
-        char_ring_buffer_remove(&self.bit_sequence, 8);
-        self.byte_sequence[self.byte_seq_len++] = dat;
-        if(self.byte_seq_len >= MAX_BYTES){
-          // Packet Overized!
-          AFSK_Demodulator_reset();
-        }
-
-      }
-
-      self.count_last = 0;
-
-    } else
       self.count_last++;
+      self.same_count++;
+
+    }
 
   }
 
 }
 
-
+void AFSK_Demodulator_set_offset(const decimal offset) {
+  self.offset = offset;
+}
 
