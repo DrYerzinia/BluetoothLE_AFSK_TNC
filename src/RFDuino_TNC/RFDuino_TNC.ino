@@ -62,7 +62,7 @@ void setup() {
   Serial.begin(9600);
 
   RFduinoBLE.begin();
-  AFSK_Demodulator_init(1200, 2200, 1200, d_from_float(1800.0));
+  AFSK_Demodulator_init(1200, 2200, 1200, d_from_float(0.0));
   SPI_Setup();
 
 }

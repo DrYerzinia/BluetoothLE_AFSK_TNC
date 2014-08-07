@@ -96,7 +96,7 @@ void AFSK_Demodulator_proccess_byte(const int8_t data_point, uint8_t * new_data)
     decimal_ring_buffer_pop(&self.input_buffer);
 
     // Moving average filter
-    self.fcd_filt = self.fcd_filt + ddiv((fcd - self.fcd_filt), d_from_float(2.3)); // FILT <-- FILT + FF(NEW - FILT)
+    self.fcd_filt = self.fcd_filt + dmul((fcd - self.fcd_filt), d_from_float(0.4)); // FILT <-- FILT + FF(NEW - FILT)
 
     uint8_t current_value = 0;
     if (self.fcd_filt < 0)
