@@ -1,0 +1,12 @@
+Element(0x00 "SPDT Switch" "" "SPDT1825232" 160 10 3 100 0x00)
+(
+	Pin(0  -79 64 32 "1" 0x01)
+	Pin(0    0 64 32 "2" 0x01)
+	Pin(0   79 64 32 "3" 0x01)
+	Pin(0 -157 72 40 "4" 0x101)
+	Pin(0  157 72 40 "5" 0x01)
+	ElementLine(-85 -210 -85  210 20)
+	ElementLine( 85 -210  85  210 20)
+	ElementLine(-85 -210  85 -210 20)
+	ElementLine(-85  210  85  210 20)
+)
