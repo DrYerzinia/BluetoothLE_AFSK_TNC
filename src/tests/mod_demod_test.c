@@ -133,7 +133,7 @@ void test_modulator(const uint8_t test_data[][255], const uint32_t *test_data_le
 	uint16_t i;
 	for(i = 0; i < test_count; i++){
 
-		AFSK_Modulator_init(test_data[0], test_data_len[0], 1200, 1200, 2200, 25, 5);
+		AFSK_Modulator_init((uint8_t*)test_data[0], test_data_len[0], 1200, 1200, 2200, 25, 5);
 
 		int16_t dat = 0;
 		while(dat != 0x100){
@@ -163,7 +163,7 @@ void test_modulator(const uint8_t test_data[][255], const uint32_t *test_data_le
 
 void main(){
 
-	AFSK_Demodulator_init(1200, 2200, 1200);
+	AFSK_Demodulator_init(1200, 2200, 1200, 1800);
 
 	test_file("data/ARISS_stat_packet_11025.raw", ARISS_data, ARISS_data_len, ARISS_count);
 	printf("ARISS Demod Test passed\n");

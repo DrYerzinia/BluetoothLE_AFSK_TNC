@@ -9,7 +9,7 @@
 
 #define AFSK_MODULATOR_PACKET_FINISHED 0x100
 
-#define SAMPLE_RATE 11025
+#define MODULATOR_SAMPLE_RATE 11025
 #define MAX_BYTES 255
 
 typedef struct {
@@ -17,7 +17,7 @@ typedef struct {
   uint8_t stage;
 
   uint8_t len;
-  int8_t data[MAX_BYTES];
+  uint8_t data[MAX_BYTES];
 
   uint8_t start_preambles;
   uint8_t end_preambles;
@@ -40,7 +40,7 @@ typedef struct {
 extern "C" {
 #endif
 
-void AFSK_Modulator_init(const int8_t * data, uint8_t len, uint16_t bit_rate, uint16_t frequency_0, uint16_t frequency_1, uint8_t start_preambles, uint8_t end_preambles);
+void AFSK_Modulator_init(uint8_t * data, uint8_t len, uint16_t bit_rate, uint16_t frequency_0, uint16_t frequency_1, uint8_t start_preambles, uint8_t end_preambles);
 
 int16_t AFSK_Modulator_next_sample();
 

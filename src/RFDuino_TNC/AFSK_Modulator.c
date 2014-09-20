@@ -9,7 +9,7 @@
 
 static AFSK_Modulator self;
 
-void AFSK_Modulator_init(const int8_t * data, const uint8_t len, const uint16_t bit_rate, const uint16_t frequency_0, const uint16_t frequency_1, const uint8_t start_preambles, const uint8_t end_preambles){
+void AFSK_Modulator_init(uint8_t * data, const uint8_t len, const uint16_t bit_rate, const uint16_t frequency_0, const uint16_t frequency_1, const uint8_t start_preambles, const uint8_t end_preambles){
 
   self.stage = 0;
 
@@ -52,7 +52,7 @@ static inline void AFSK_Modulator_change_frequency(){
 
 static int8_t AFSK_Modulator_next(const uint16_t freq){
 
-  self.phi += 256 * freq / SAMPLE_RATE;
+  self.phi += 256 * freq / MODULATOR_SAMPLE_RATE;
   self.sample_counter++;
 
   return sin_table[self.phi];
@@ -61,7 +61,7 @@ static int8_t AFSK_Modulator_next(const uint16_t freq){
 
 static int8_t AFSK_Modulator_get_preamble(const uint8_t num_preambles){
 
-  uint16_t current_bit = self.sample_counter * self.bit_rate / SAMPLE_RATE;
+  uint16_t current_bit = self.sample_counter * self.bit_rate / MODULATOR_SAMPLE_RATE;
 
   if(current_bit != self.last_bit){
 
@@ -83,7 +83,7 @@ static int8_t AFSK_Modulator_get_preamble(const uint8_t num_preambles){
 
 static int8_t AFSK_Modulator_get_data(){
 
-  uint16_t current_bit = self.sample_counter * self.bit_rate / SAMPLE_RATE;
+  uint16_t current_bit = self.sample_counter * self.bit_rate / MODULATOR_SAMPLE_RATE;
 
   if(current_bit != self.last_bit){
 
@@ -91,7 +91,7 @@ static int8_t AFSK_Modulator_get_data(){
     if(self.same_count == 5){
 
       self.same_count = 0;
-      self.sample_counter -= SAMPLE_RATE / self.bit_rate;
+      self.sample_counter -= MODULATOR_SAMPLE_RATE / self.bit_rate;
       AFSK_Modulator_change_frequency();
 
     } else {
