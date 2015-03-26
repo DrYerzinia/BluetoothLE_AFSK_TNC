@@ -181,8 +181,10 @@ void interrupt isr(void){
             if(!dac_started);
             else if(data_buffer_read_pos == data_buffer_write_pos){
 
+                // STALL DAC FOR TESTING
+                
                 overflow = true;
-
+                /*
                 mode = ADC_MODE;
 
                 // Stop DAC
@@ -195,6 +197,7 @@ void interrupt isr(void){
                 // Reset buffer
                 data_buffer_write_pos = 0;
                 data_buffer_read_pos = 0;
+                */
 
             } else {
 

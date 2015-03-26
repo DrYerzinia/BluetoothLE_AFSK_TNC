@@ -21,7 +21,7 @@ void AFSK_Modulator_init(uint8_t * data, const uint8_t len, const uint16_t bit_r
   self.frequency_0 = frequency_0;
   self.frequency_1 = frequency_1;
 
-  self.current_frequency = frequency_0;
+  self.current_frequency = 0;
 
   self.len = len;
   memcpy(self.data, data, len);
@@ -29,6 +29,9 @@ void AFSK_Modulator_init(uint8_t * data, const uint8_t len, const uint16_t bit_r
   self.same_count = 0;
   self.last_bit = 0;
   self.sample_counter = 0;
+
+  self.freq_0_phi_adjust = 256 * frequency_0 / MODULATOR_SAMPLE_RATE;
+  self.freq_1_phi_adjust = 256 * frequency_1 / MODULATOR_SAMPLE_RATE;
 
 }
 
@@ -42,17 +45,20 @@ static inline void AFSK_Modulator_advance_stage(){
 
 static inline void AFSK_Modulator_change_frequency(){
 
-  if(self.current_frequency == self.frequency_0)
-    self.current_frequency = self.frequency_1;
+  if(self.current_frequency == 0)
+    self.current_frequency = 1;
 
   else
-    self.current_frequency = self.frequency_0;
+    self.current_frequency = 0;
 
 }
 
-static int8_t AFSK_Modulator_next(const uint16_t freq){
+static int8_t AFSK_Modulator_next(const uint8_t freq){
 
-  self.phi += 256 * freq / MODULATOR_SAMPLE_RATE;
+  if(freq == 0)
+    self.phi += self.freq_0_phi_adjust;
+  else
+    self.phi += self.freq_1_phi_adjust;
   self.sample_counter++;
 
   return sin_table[self.phi];

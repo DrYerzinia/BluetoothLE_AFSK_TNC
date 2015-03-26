@@ -27,12 +27,15 @@ typedef struct {
   uint16_t frequency_0;
   uint16_t frequency_1;
 
-  uint16_t current_frequency;
+  uint8_t current_frequency;
 
   uint8_t same_count;
   uint16_t last_bit;
   uint32_t sample_counter;
   uint8_t phi;
+
+  uint8_t freq_0_phi_adjust;
+  uint8_t freq_1_phi_adjust;
 
 } AFSK_Modulator;
 

@@ -136,6 +136,8 @@ void setup() {
   pinMode(BATTERY_MEASURE_PIN, INPUT);
   pinMode(6, OUTPUT);
 
+  //AFSK_Modulator_init(ARISS_data, ARISS_data_len, 1200, 1200, 2200, 120, 60);
+
 }
 
 void RFduinoBLE_onConnect() {
@@ -194,8 +196,21 @@ void RFduinoBLE_onReceive(char *data, int len) {
 
 }
 
-void loop() {
+// Persistent sample so we can run sample calculation during SPI transfer
+//uint16_t sample;
 
+void loop() {
+/*
+  // Code for testing sample caluculation time
+  NRF_GPIO->OUTSET = (1 << 6);
+  uint16_t sample = AFSK_Modulator_next_sample();
+  NRF_GPIO->OUTCLR = (1 << 6);
+
+  if(sample == 0x100)
+    AFSK_Modulator_init(ARISS_data, ARISS_data_len, 1200, 1200, 2200, 120, 60);
+
+  return;
+*/
   // Start SPI request for ADC Sample
   if (spi_wait_flag) {
 
@@ -214,14 +229,20 @@ void loop() {
 
       // if starting send 0x7E to switch to DAC mode
       if (stage == TX_STAGE_1) {
+
         NRF_SPI0->TXD = 0x7E;
         stage = TX_STAGE_2;
+        // While TXing byte to switch to DAC mode
+        // Start calculating first sample
+        //sample = AFSK_Modulator_next_sample();
+
       }
       // else send next tx byte from modulator
       else if (stage == TX_STAGE_2) {
 
-        uint16_t sample = AFSK_Modulator_next_sample();
+        int16_t sample = AFSK_Modulator_next_sample();
 
+        // process previously calculated sample
         // if modulator 0x100 recived finished sending wait for tx buffer to empty
         if (sample == AFSK_MODULATOR_PACKET_FINISHED) {
           NRF_SPI0->TXD = 0x7E; // NULL data character
@@ -234,6 +255,9 @@ void loop() {
             NRF_SPI0->TXD = 0x7D;
           else
             NRF_SPI0->TXD = (uint8_t)(sample & 0xFF);
+
+          // start calculating next sample during SPI Xfer
+          //sample = AFSK_Modulator_next_sample();
 
         }
       }
