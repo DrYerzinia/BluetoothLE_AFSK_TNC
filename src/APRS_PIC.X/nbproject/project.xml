@@ -2,12 +2,12 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>BLE_TNC_ADC_DAC</name>
-            <creation-uuid>d4af753a-8899-4428-870b-63dcc201af75</creation-uuid>
+            <name>APRS_PIC</name>
+            <creation-uuid>d565d3b8-a94d-4bc2-9f76-d8aa0e526a5d</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
             <cpp-extensions/>
-            <header-extensions/>
+            <header-extensions>h</header-extensions>
             <asminc-extensions/>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
