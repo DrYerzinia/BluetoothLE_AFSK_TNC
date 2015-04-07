@@ -22,7 +22,7 @@ void console_input(char c){
         case 0x0A:	// New Line
         case 0x0D:	// Carriage Return
 
-            printf("\n\r");
+            //printf("\n\r");
             command_buffer[command_buffer_position] = '\0';
 
             if(strcmp(command_buffer, "hello") == 0){
@@ -47,7 +47,7 @@ void console_input(char c){
 
             } else {
 
-                printf("?\n\r");
+                printf("str\n\r");
 
             }
 
@@ -55,6 +55,7 @@ void console_input(char c){
 
             break;
 
+        /* // TNC MAKES NO MISTAKE!
         case 0x7F:	// Delete
         case 0x08:	// Backspace
 
@@ -62,6 +63,7 @@ void console_input(char c){
                 command_buffer_position--;
                 putch(c);
             }
+            */
 
             break;
 
@@ -72,8 +74,9 @@ void console_input(char c){
 
             if(command_buffer_position == COMMAND_BUFFER_SIZE)
                 command_buffer_position--;
-            else
-                putch(c);
+            // ECHO off for TNC
+            //else
+                //putch(c);
 
             break;
 
@@ -116,7 +119,10 @@ int main(void){
 
     AFSK_Demodulator_init(1200, 2200, 1200, d_from_float(0.0));
 
-    printf("BluetoothLE TNC Active\n\r");
+    __delay_ms(500);// delay for BLE INIT TIME
+    printf("str\n\r"); // start stream mode BlE TNC
+
+    //printf("BluetoothLE TNC Active\n\r");
 
     while(1){
         if(mode == RX_MODE){
