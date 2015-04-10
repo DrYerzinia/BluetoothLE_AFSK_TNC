@@ -50,6 +50,9 @@ uint16_t base64_encode(uint8_t *input, char *output, uint16_t len){
             output++;
             *output = '\0';
             break;
+        case 0:
+            output--;
+            *output = '\0';
     }
 
     return (uint16_t)(output - start);
