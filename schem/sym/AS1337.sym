@@ -1,0 +1,107 @@
+v 20130925 2
+P 0 1800 400 1800 1 0 0
+{
+T 0 1800 5 10 0 0 0 0 1
+pintype=unknown
+T 455 1795 5 10 1 1 0 0 1
+pinlabel=VOUT
+T 305 1845 5 10 1 1 0 6 1
+pinnumber=1
+T 0 1800 5 10 0 0 0 0 1
+pinseq=0
+}
+P 0 1400 400 1400 1 0 0
+{
+T 0 1400 5 10 0 0 0 0 1
+pintype=unknown
+T 455 1395 5 10 1 1 0 0 1
+pinlabel=LX
+T 305 1445 5 10 1 1 0 6 1
+pinnumber=2
+T 0 1400 5 10 0 0 0 0 1
+pinseq=0
+}
+P 0 1000 400 1000 1 0 0
+{
+T 0 1000 5 10 0 0 0 0 1
+pintype=unknown
+T 455 995 5 10 1 1 0 0 1
+pinlabel=PGND
+T 305 1045 5 10 1 1 0 6 1
+pinnumber=3
+T 0 1000 5 10 0 0 0 0 1
+pinseq=0
+}
+P 0 600 400 600 1 0 0
+{
+T 0 600 5 10 0 0 0 0 1
+pintype=unknown
+T 455 595 5 10 1 1 0 0 1
+pinlabel=GND
+T 305 645 5 10 1 1 0 6 1
+pinnumber=4
+T 0 600 5 10 0 0 0 0 1
+pinseq=0
+}
+P 2400 600 2000 600 1 0 0
+{
+T 2400 600 5 10 0 0 0 6 1
+pintype=unknown
+T 1945 595 5 10 1 1 0 6 1
+pinlabel=EN
+T 2095 645 5 10 1 1 0 0 1
+pinnumber=5
+T 2400 600 5 10 0 0 0 6 1
+pinseq=0
+}
+P 2400 1000 2000 1000 1 0 0
+{
+T 2400 1000 5 10 0 0 0 6 1
+pintype=unknown
+T 1945 995 5 10 1 1 0 6 1
+pinlabel=POK
+T 2095 1045 5 10 1 1 0 0 1
+pinnumber=6
+T 2400 1000 5 10 0 0 0 6 1
+pinseq=0
+}
+P 2400 1400 2000 1400 1 0 0
+{
+T 2400 1400 5 10 0 0 0 6 1
+pintype=unknown
+T 1945 1395 5 10 1 1 0 6 1
+pinlabel=VIN
+T 2095 1445 5 10 1 1 0 0 1
+pinnumber=7
+T 2400 1400 5 10 0 0 0 6 1
+pinseq=0
+}
+P 2400 1800 2000 1800 1 0 0
+{
+T 2400 1800 5 10 0 0 0 6 1
+pintype=unknown
+T 1945 1795 5 10 1 1 0 6 1
+pinlabel=FB
+T 2095 1845 5 10 1 1 0 0 1
+pinnumber=8
+T 2400 1800 5 10 0 0 0 6 1
+pinseq=0
+}
+P 1200 0 1200 400 1 0 0
+{
+T 1200 0 5 10 0 0 270 6 1
+pintype=unknown
+T 1200 455 5 10 1 1 90 0 1
+pinlabel=GND
+T 1150 305 5 10 1 1 90 6 1
+pinnumber=9
+T 1200 0 5 10 0 0 270 6 1
+pinseq=0
+}
+B 400 400 1600 1600 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+T 400 2100 8 10 1 1 0 0 1
+refdes=U?
+T 2000 300 8 10 1 1 180 0 1
+device=AS1337
+T 2000 2100 8 10 1 1 0 6 1
+footprint=DFN8_65
