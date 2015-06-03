@@ -1,0 +1,10 @@
+Element(0x00 "Single in line package" "" "SIP2" 160 10 3 100 0x00)
+(
+	Pin(50 50 70 38 "1" 0x101)
+	ElementLine(  0 50   0 50 20)
+	ElementLine(100 50 100 50 20)
+	ElementLine(  0 100 100 100 10)
+	ElementArc(50  50 50 50 180 180 20)
+	ElementArc(50 50 50 50   0 180 20)
+	Mark(50 50)
+)
